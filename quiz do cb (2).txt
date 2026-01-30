@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Chris Brown Quiz</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #000, #1a1a1a);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+#quiz {
+  background: #111;
+  padding: 20px;
+  border-radius: 12px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(255,255,255,0.1);
+}
+button {
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #ff0055;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+button:hover {
+  background: #ff3377;
+}
+</style>
+</head>
+<body>
+
+<div id="quiz">
+  <h2 id="question">Pergunta</h2>
+  <div id="answers"></div>
+  <p id="score">Pontos: 0</p>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Qual é o nome completo do Chris Brown?",
+    a: ["Christopher Maurice Brown", "Chris Michael Brown", "Christian Brown", "Christopher James Brown"],
+    c: 0
+  },
+  {
+    q: "Em que ano Chris Brown nasceu?",
+    a: ["1987", "1989", "1990", "1992"],
+    c: 0
+  },
+  {
+    q: "Qual foi o primeiro grande hit dele?",
+    a: ["Run It!", "With You", "Loyal", "Yeah 3x"],
+    c: 0
+  },
+  {
+    q: "Chris Brown nasceu em qual estado?",
+    a: ["Virgínia", "Califórnia", "Texas", "Nova York"],
+    c: 0
+  },
+  {
+    q: "Além de cantar, ele também é conhecido por:",
+    a: ["Dançar e desenhar", "Ser DJ", "Atuar em novelas", "Produzir filmes"],
+    c: 0
+  }
+];
+
+let current = 0;
+let score = 0;
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML =
+      `<h2>Fim do jogo 🔥</h2>
+       <p>Sua pontuação: ${score}</p>
+       <p>Você é fã real do Chris Brown 😎</p>`;
+    return;
+  }
+
+  const q = questions[current];
+  document.getElementById("question").innerText = q.q;
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
+
+  q.a.forEach((text, index) => {
+    const btn = document.createElement("button");
+    btn.innerText = text;
+    btn.onclick = () => {
+      if (index === q.c) score += 10;
+      document.getElementById("score").innerText = "Pontos: " + score;
+      current++;
+      loadQuestion();
+    };
+    answersDiv.appendChild(btn);
+  });
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
