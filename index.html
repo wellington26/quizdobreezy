@@ -114,11 +114,6 @@ input {
   color: #fff;
   border: 1px solid #444;
 }
-
-.social-buttons a:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
-}
 </style>
 </head>
 
@@ -134,52 +129,39 @@ input {
 </div>
 
 <script>
-const questions = [
-  { q: "Qual é o nome completo do Chris Brown?",
-    a: ["Christopher Maurice Brown", "Chris Michael Brown", "Christian Brown", "Christopher James Brown"],
-    c: 0
-  },
-  { q: "Em que ano Chris Brown nasceu?",
-    a: ["1987", "1989", "1990", "1992"],
-    c: 1
-  },
-  { q: "Qual foi o primeiro grande hit dele?",
-    a: ["Loyal!", "With You", "Run It", "Yeah 3x"],
-    c: 2
-  },
-  { q: "Chris Brown nasceu em qual estado?",
-    a: ["Texas", "Califórnia", "Virgínia", "Nova York"],
-    c: 2
-  },
-  { q: "Além de cantar, ele também é conhecido por:",
-    a: ["Produzir Filmes", "Ser DJ", "Atuar em novelas", "Dançar e Desenhar"],
-    c: 3
-  },
-  { q: "Qual é o apelido mais famoso do Chris Brown?",
-    a: ["Breezy", "CB", "Brownie", "King Chris"],
-    c: 0
-  },
-  { q: "Qual álbum foi lançado em 2011?",
-    a: ["X", "F.A.M.E.", "Indigo", "Royalty"],
-    c: 1
-  },
-  { q: "Chris Brown já atuou em qual filme?",
-    a: ["Stomp the Yard", "You Got Served", "Step Up", "Save the Last Dance"],
-    c: 0
-  },
-  { q: "Qual álbum duplo ele lançou em 2017?",
-    a: ["X", "Heartbreak on a Full Moon", "Indigo", "Breezy"],
-    c: 1
-  },
-  { q: "Em que ano Chris Brown ganhou seu primeiro Grammy?",
-    a: ["2010", "2012", "2014", "2016"],
-    c: 1
-  },
-  { q: "Em que ano Chris Brown ganhou seu segundo Grammy?",
-    a: ["2012", "2018", "2024", "2025"],
-    c: 3
-  }
+// 🌍 idioma automático
+const lang = navigator.language.startsWith("pt") ? "pt" : "en";
+
+// 🌍 perguntas PT / EN
+const questionsPT = [
+  { q:"Qual é o nome completo do Chris Brown?", a:["Christopher Maurice Brown","Chris Michael Brown","Christian Brown","Christopher James Brown"], c:0 },
+  { q:"Em que ano Chris Brown nasceu?", a:["1987","1989","1990","1992"], c:1 },
+  { q:"Qual foi o primeiro grande hit dele?", a:["Loyal!","With You","Run It","Yeah 3x"], c:2 },
+  { q:"Chris Brown nasceu em qual estado?", a:["Texas","Califórnia","Virgínia","Nova York"], c:2 },
+  { q:"Além de cantar, ele também é conhecido por:", a:["Produzir Filmes","Ser DJ","Atuar em novelas","Dançar e Desenhar"], c:3 },
+  { q:"Qual é o apelido mais famoso do Chris Brown?", a:["Breezy","CB","Brownie","King Chris"], c:0 },
+  { q:"Qual álbum foi lançado em 2011?", a:["X","F.A.M.E.","Indigo","Royalty"], c:1 },
+  { q:"Chris Brown já atuou em qual filme?", a:["Stomp the Yard","You Got Served","Step Up","Save the Last Dance"], c:0 },
+  { q:"Qual álbum duplo ele lançou em 2017?", a:["X","Heartbreak on a Full Moon","Indigo","Breezy"], c:1 },
+  { q:"Em que ano Chris Brown ganhou seu primeiro Grammy?", a:["2010","2012","2014","2016"], c:1 },
+  { q:"Em que ano Chris Brown ganhou seu segundo Grammy?", a:["2012","2018","2024","2025"], c:3 }
 ];
+
+const questionsEN = [
+  { q:"What is Chris Brown's full name?", a:["Christopher Maurice Brown","Chris Michael Brown","Christian Brown","Christopher James Brown"], c:0 },
+  { q:"What year was Chris Brown born?", a:["1987","1989","1990","1992"], c:1 },
+  { q:"What was his first major hit?", a:["Loyal!","With You","Run It","Yeah 3x"], c:2 },
+  { q:"Chris Brown was born in which state?", a:["Texas","California","Virginia","New York"], c:2 },
+  { q:"Besides singing, he is also known for:", a:["Producing movies","Being a DJ","Acting in soap operas","Dancing and drawing"], c:3 },
+  { q:"What is Chris Brown's most famous nickname?", a:["Breezy","CB","Brownie","King Chris"], c:0 },
+  { q:"Which album was released in 2011?", a:["X","F.A.M.E.","Indigo","Royalty"], c:1 },
+  { q:"Which movie did Chris Brown act in?", a:["Stomp the Yard","You Got Served","Step Up","Save the Last Dance"], c:0 },
+  { q:"Which double album did he release in 2017?", a:["X","Heartbreak on a Full Moon","Indigo","Breezy"], c:1 },
+  { q:"In what year did Chris Brown win his first Grammy?", a:["2010","2012","2014","2016"], c:1 },
+  { q:"In what year did Chris Brown win his second Grammy?", a:["2012","2018","2024","2025"], c:3 }
+];
+
+const questions = lang === "pt" ? questionsPT : questionsEN;
 
 let current = 0;
 let score = 0;
@@ -193,14 +175,14 @@ const timerEl = document.getElementById("timer");
 function startScreen() {
   content.innerHTML = `
     <h2>🔥 Chris Brown Quiz</h2>
-    <input id="nameInput" placeholder="Digite seu nome">
-    <button onclick="startGame()">Começar</button>
+    <input id="nameInput" placeholder="${lang==="pt"?"Digite seu nome":"Enter your name"}">
+    <button onclick="startGame()">${lang==="pt"?"Começar":"Start"}</button>
   `;
 }
 
 function startGame() {
   const name = document.getElementById("nameInput").value.trim();
-  if (!name) return alert("Digite seu nome!");
+  if (!name) return alert(lang==="pt"?"Digite seu nome!":"Enter your name!");
   playerName = name;
   loadQuestion();
 }
@@ -213,7 +195,6 @@ function startTimer(correctIndex) {
   timerInterval = setInterval(() => {
     timeLeft--;
     timerEl.innerText = `⏱️ ${timeLeft}s`;
-
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       autoFail(correctIndex);
@@ -225,11 +206,7 @@ function autoFail(correctIndex) {
   const buttons = document.querySelectorAll("button");
   buttons.forEach(b => b.disabled = true);
   buttons[correctIndex].classList.add("correct");
-
-  setTimeout(() => {
-    current++;
-    loadQuestion();
-  }, 800);
+  setTimeout(() => { current++; loadQuestion(); }, 800);
 }
 
 function loadQuestion() {
@@ -252,7 +229,6 @@ function loadQuestion() {
 
 function answer(button, index, correct) {
   clearInterval(timerInterval);
-
   const buttons = document.querySelectorAll("button");
   buttons.forEach(b => b.disabled = true);
 
@@ -264,10 +240,7 @@ function answer(button, index, correct) {
     buttons[correct].classList.add("correct");
   }
 
-  setTimeout(() => {
-    current++;
-    loadQuestion();
-  }, 800);
+  setTimeout(() => { current++; loadQuestion(); }, 800);
 }
 
 function finishGame() {
@@ -276,21 +249,24 @@ function finishGame() {
 
   content.innerHTML = `
     <div class="final-container">
-      <h2>🔥 Fim do jogo!</h2>
-      <p><strong>${playerName}</strong>, você fez <strong>${score}</strong> pontos 🏆</p>
+      <h2>🔥 ${lang==="pt"?"Fim do jogo!":"Game Over!"}</h2>
+      <p><strong>${playerName}</strong>, 
+      ${lang==="pt"?"você fez":"you scored"} 
+      <strong>${score}</strong> 
+      ${lang==="pt"?"pontos":"points"} 🏆</p>
 
       <h3>🏅 Ranking</h3>
       ${ranking.map((r,i)=>`<p>${i+1}. ${r.name} - ${r.score}</p>`).join("")}
 
       <p style="margin-top:15px;">
-        Gostou do quiz?<br>
-        Compartilhe com seus amigos para que eles também se divirtam. 🔥<br>
-        Siga-me nas redes sociais para apoiar este projeto de quiz. 👇👇
+        ${lang==="pt"
+          ?"Gostou do quiz?<br>Compartilhe com seus amigos para que eles também se divirtam. 🔥<br>Siga-me nas redes sociais para apoiar este projeto. 👇👇"
+          :"Did you enjoy the quiz?<br>Share it with your friends 🔥<br>Follow me on social media to support this project. 👇👇"}
       </p>
 
       <div class="social-buttons">
         <a class="instagram" href="https://www.instagram.com/w3.ll_/" target="_blank">📸 Instagram</a>
-        <a class="tiktok" href="https://www.tiktok.com/@w.3.l.l?lang=pt-BR" target="_blank">🎵 TikTok</a>
+        <a class="tiktok" href="https://www.tiktok.com/@w.3.l.l" target="_blank">🎵 TikTok</a>
       </div>
     </div>
   `;
@@ -314,4 +290,3 @@ startScreen();
 
 </body>
 </html>
-
