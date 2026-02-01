@@ -114,11 +114,6 @@ input {
   color: #fff;
   border: 1px solid #444;
 }
-
-.social-buttons a:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
-}
 </style>
 </head>
 
@@ -126,86 +121,75 @@ input {
 
 <div id="quiz">
   <img src="capa.jpg" alt="Chris Brown Quiz">
-  <div class="progress">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
   <div id="timer">⏱️ 10s</div>
   <div id="content"></div>
 </div>
 
 <script>
-const questions = [
-  { q: "Qual é o nome completo do Chris Brown?",
-    a: ["Christopher Maurice Brown", "Chris Michael Brown", "Christian Brown", "Christopher James Brown"],
-    c: 0
+// 🌍 Detecta idioma do navegador
+const lang = navigator.language.startsWith("pt") ? "pt" : "en";
+
+// 🌍 Textos do sistema
+const texts = {
+  pt: {
+    title: "🔥 Chris Brown Quiz",
+    namePlaceholder: "Digite seu nome",
+    start: "Começar",
+    end: "🔥 Fim do jogo!",
+    score: "você fez",
+    points: "pontos",
+    ranking: "🏅 Ranking",
+    share: "Gostou do quiz?<br>Compartilhe com seus amigos 🔥<br>Siga-me nas redes sociais 👇👇"
   },
-  { q: "Em que ano Chris Brown nasceu?",
-    a: ["1987", "1989", "1990", "1992"],
-    c: 1
-  },
-  { q: "Qual foi o primeiro grande hit dele?",
-    a: ["Loyal!", "With You", "Run It", "Yeah 3x"],
-    c: 2
-  },
-  { q: "Chris Brown nasceu em qual estado?",
-    a: ["Texas", "Califórnia", "Virgínia", "Nova York"],
-    c: 2
-  },
-  { q: "Além de cantar, ele também é conhecido por:",
-    a: ["Produzir Filmes", "Ser DJ", "Atuar em novelas", "Dançar e Desenhar"],
-    c: 3
-  },
-  { q: "Qual é o apelido mais famoso do Chris Brown?",
-    a: ["Breezy", "CB", "Brownie", "King Chris"],
-    c: 0
-  },
-  { q: "Qual álbum foi lançado em 2011?",
-    a: ["X", "F.A.M.E.", "Indigo", "Royalty"],
-    c: 1
-  },
-  { q: "Chris Brown já atuou em qual filme?",
-    a: ["Stomp the Yard", "You Got Served", "Step Up", "Save the Last Dance"],
-    c: 0
-  },
-  { q: "Qual álbum duplo ele lançou em 2017?",
-    a: ["X", "Heartbreak on a Full Moon", "Indigo", "Breezy"],
-    c: 1
-  },
-  { q: "Em que ano Chris Brown ganhou seu primeiro Grammy?",
-    a: ["2010", "2012", "2014", "2016"],
-    c: 1
-  },
-  { q: "Em que ano Chris Brown ganhou seu segundo Grammy?",
-    a: ["2012", "2018", "2024", "2025"],
-    c: 3
+  en: {
+    title: "🔥 Chris Brown Quiz",
+    namePlaceholder: "Enter your name",
+    start: "Start",
+    end: "🔥 Game Over!",
+    score: "you scored",
+    points: "points",
+    ranking: "🏅 Ranking",
+    share: "Did you enjoy the quiz?<br>Share it with friends 🔥<br>Follow me on social media 👇👇"
   }
+};
+
+// 🌍 Perguntas PT / EN
+const questions = lang === "pt" ? [
+  { q:"Qual é o nome completo do Chris Brown?", a:["Christopher Maurice Brown","Chris Michael Brown","Christian Brown","Christopher James Brown"], c:0 },
+  { q:"Em que ano Chris Brown nasceu?", a:["1987","1989","1990","1992"], c:1 },
+  { q:"Qual foi o primeiro grande hit dele?", a:["Loyal!","With You","Run It","Yeah 3x"], c:2 }
+] : [
+  { q:"What is Chris Brown's full name?", a:["Christopher Maurice Brown","Chris Michael Brown","Christian Brown","Christopher James Brown"], c:0 },
+  { q:"What year was Chris Brown born?", a:["1987","1989","1990","1992"], c:1 },
+  { q:"What was his first major hit?", a:["Loyal!","With You","Run It","Yeah 3x"], c:2 }
 ];
 
 let current = 0;
 let score = 0;
 let playerName = "";
 let timeLeft = 10;
-let timerInterval = null;
+let timerInterval;
 
 const content = document.getElementById("content");
 const timerEl = document.getElementById("timer");
 
 function startScreen() {
   content.innerHTML = `
-    <h2>🔥 Chris Brown Quiz</h2>
-    <input id="nameInput" placeholder="Digite seu nome">
-    <button onclick="startGame()">Começar</button>
+    <h2>${texts[lang].title}</h2>
+    <input id="nameInput" placeholder="${texts[lang].namePlaceholder}">
+    <button onclick="startGame()">${texts[lang].start}</button>
   `;
 }
 
 function startGame() {
   const name = document.getElementById("nameInput").value.trim();
-  if (!name) return alert("Digite seu nome!");
+  if (!name) return alert(texts[lang].namePlaceholder);
   playerName = name;
   loadQuestion();
 }
 
-function startTimer(correctIndex) {
+function startTimer(correct) {
   clearInterval(timerInterval);
   timeLeft = 10;
   timerEl.innerText = `⏱️ ${timeLeft}s`;
@@ -213,23 +197,18 @@ function startTimer(correctIndex) {
   timerInterval = setInterval(() => {
     timeLeft--;
     timerEl.innerText = `⏱️ ${timeLeft}s`;
-
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
-      autoFail(correctIndex);
+      autoFail(correct);
     }
   }, 1000);
 }
 
-function autoFail(correctIndex) {
+function autoFail(correct) {
   const buttons = document.querySelectorAll("button");
   buttons.forEach(b => b.disabled = true);
-  buttons[correctIndex].classList.add("correct");
-
-  setTimeout(() => {
-    current++;
-    loadQuestion();
-  }, 800);
+  buttons[correct].classList.add("correct");
+  setTimeout(() => { current++; loadQuestion(); }, 800);
 }
 
 function loadQuestion() {
@@ -240,73 +219,36 @@ function loadQuestion() {
     ((current / questions.length) * 100) + "%";
 
   content.innerHTML = `<h3>${q.q}</h3>`;
-  q.a.forEach((text, i) => {
+  q.a.forEach((text,i)=>{
     const btn = document.createElement("button");
     btn.innerText = text;
-    btn.onclick = () => answer(btn, i, q.c);
+    btn.onclick = () => answer(btn,i,q.c);
     content.appendChild(btn);
   });
 
   startTimer(q.c);
 }
 
-function answer(button, index, correct) {
+function answer(btn,i,c){
   clearInterval(timerInterval);
-
   const buttons = document.querySelectorAll("button");
-  buttons.forEach(b => b.disabled = true);
+  buttons.forEach(b=>b.disabled=true);
 
-  if (index === correct) {
-    button.classList.add("correct");
-    score += 10;
-  } else {
-    button.classList.add("wrong");
-    buttons[correct].classList.add("correct");
-  }
+  if(i===c){ btn.classList.add("correct"); score+=10;}
+  else{ btn.classList.add("wrong"); buttons[c].classList.add("correct");}
 
-  setTimeout(() => {
-    current++;
-    loadQuestion();
-  }, 800);
+  setTimeout(()=>{current++;loadQuestion();},800);
 }
 
-function finishGame() {
-  saveRanking();
-  const ranking = getRanking();
-
+function finishGame(){
   content.innerHTML = `
     <div class="final-container">
-      <h2>🔥 Fim do jogo!</h2>
-      <p><strong>${playerName}</strong>, você fez <strong>${score}</strong> pontos 🏆</p>
-
-      <h3>🏅 Ranking</h3>
-      ${ranking.map((r,i)=>`<p>${i+1}. ${r.name} - ${r.score}</p>`).join("")}
-
-      <p style="margin-top:15px;">
-        Gostou do quiz?<br>
-        Compartilhe com seus amigos para que eles também se divirtam. 🔥<br>
-        Siga-me nas redes sociais para apoiar este projeto de quiz. 👇👇
-      </p>
-
-      <div class="social-buttons">
-        <a class="instagram" href="https://www.instagram.com/w3.ll_/" target="_blank">📸 Instagram</a>
-        <a class="tiktok" href="https://www.tiktok.com/@w.3.l.l?lang=pt-BR" target="_blank">🎵 TikTok</a>
-      </div>
+      <h2>${texts[lang].end}</h2>
+      <p><strong>${playerName}</strong>, ${texts[lang].score} <strong>${score}</strong> ${texts[lang].points}</p>
+      <p>${texts[lang].share}</p>
     </div>
   `;
-  document.getElementById("progressBar").style.width = "100%";
-}
-
-function saveRanking() {
-  let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
-  ranking.push({ name: playerName, score });
-  ranking.sort((a,b)=>b.score-a.score);
-  ranking = ranking.slice(0,5);
-  localStorage.setItem("ranking", JSON.stringify(ranking));
-}
-
-function getRanking() {
-  return JSON.parse(localStorage.getItem("ranking")) || [];
+  document.getElementById("progressBar").style.width="100%";
 }
 
 startScreen();
