@@ -55,7 +55,7 @@ button:disabled { cursor: not-allowed; opacity: 0.8; }
   background: #333;
   border-radius: 10px;
   overflow: hidden;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .progress-bar {
@@ -63,6 +63,11 @@ button:disabled { cursor: not-allowed; opacity: 0.8; }
   width: 0%;
   background: linear-gradient(90deg, #ff0055, #ff77aa);
   transition: width 0.4s;
+}
+
+#timer {
+  font-weight: bold;
+  margin-bottom: 12px;
 }
 
 input {
@@ -121,7 +126,10 @@ input {
 
 <div id="quiz">
   <img src="capa.jpg" alt="Chris Brown Quiz">
-  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div id="timer">⏱️ 10s</div>
   <div id="content"></div>
 </div>
 
@@ -176,8 +184,11 @@ const questions = [
 let current = 0;
 let score = 0;
 let playerName = "";
+let timeLeft = 10;
+let timerInterval = null;
 
 const content = document.getElementById("content");
+const timerEl = document.getElementById("timer");
 
 function startScreen() {
   content.innerHTML = `
@@ -194,6 +205,33 @@ function startGame() {
   loadQuestion();
 }
 
+function startTimer(correctIndex) {
+  clearInterval(timerInterval);
+  timeLeft = 10;
+  timerEl.innerText = `⏱️ ${timeLeft}s`;
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerEl.innerText = `⏱️ ${timeLeft}s`;
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      autoFail(correctIndex);
+    }
+  }, 1000);
+}
+
+function autoFail(correctIndex) {
+  const buttons = document.querySelectorAll("button");
+  buttons.forEach(b => b.disabled = true);
+  buttons[correctIndex].classList.add("correct");
+
+  setTimeout(() => {
+    current++;
+    loadQuestion();
+  }, 800);
+}
+
 function loadQuestion() {
   if (current >= questions.length) return finishGame();
 
@@ -208,9 +246,13 @@ function loadQuestion() {
     btn.onclick = () => answer(btn, i, q.c);
     content.appendChild(btn);
   });
+
+  startTimer(q.c);
 }
 
 function answer(button, index, correct) {
+  clearInterval(timerInterval);
+
   const buttons = document.querySelectorAll("button");
   buttons.forEach(b => b.disabled = true);
 
