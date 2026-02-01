@@ -42,43 +42,40 @@ button {
   color: white;
   font-size: 14px;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: 0.3s;
 }
 
-button:hover {
-  background: #ff3377;
-  transform: scale(1.05);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+button:hover { background: #ff3377; }
+
+button.correct { background: #00c853; }
+button.wrong { background: #d50000; }
+button:disabled { cursor: not-allowed; opacity: 0.8; }
+
+.progress {
+  height: 8px;
+  background: #333;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff0055, #ff77aa);
+  transition: width 0.4s;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 10px;
 }
 
 .final-container {
-  animation: fadeIn 1s ease-in-out;
-}
-
-.social-buttons a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 10px;
-  padding: 12px 22px;
-  border-radius: 30px;
-  color: white;
-  font-weight: bold;
-  text-decoration: none;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.social-buttons a:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-
-.instagram {
-  background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af);
-}
-
-.tiktok {
-  background: linear-gradient(45deg, #010101, #25f4ee, #fe2c55);
+  animation: fadeIn 1s;
 }
 
 @keyframes fadeIn {
@@ -91,132 +88,105 @@ button:hover {
 <body>
 
 <div id="quiz">
-  <!-- IMAGEM DE CAPA -->
   <img src="capa.jpg" alt="Chris Brown Quiz">
-
-  <h2 id="question"></h2>
-  <div id="answers"></div>
-  <p id="score">Pontos: 0</p>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+  <div id="content"></div>
 </div>
 
 <script>
 const questions = [
-  {
-    q: "Qual é o nome completo do Chris Brown?",
-    a: ["Christopher Maurice Brown", "Chris Michael Brown", "Christian Brown", "Christopher James Brown"],
-    c: 0
-  },
-  {
-    q: "Em que ano Chris Brown nasceu?",
-    a: ["1987", "1989", "1990", "1992"],
-    c: 1
-  },
-  {
-    q: "Qual foi o primeiro grande hit dele?",
-    a: ["Loyal!", "With You", "Run It", "Yeah 3x"],
-    c: 2
-  },
-  {
-    q: "Chris Brown nasceu em qual estado?",
-    a: ["Texas", "Califórnia", "Virgínia", "Nova York"],
-    c: 2
-  },
-  {
-    q: "Além de cantar, ele também é conhecido por:",
-    a: ["Produzir Filmes", "Ser DJ", "Atuar em novelas", "Dançar e Desenhar"],
-    c: 3
-  }
-,
-{
-  q: "Qual é o apelido mais famoso do Chris Brown?",
-  a: ["Breezy", "CB", "Brownie", "King Chris"],
-  c: 0
-},
-{
-  q: "Qual álbum foi lançado em 2011?",
-  a: ["X", "F.A.M.E.", "Indigo", "Royalty"],
-  c: 1
-},
-{
-  q: "Chris Brown já atuou em qual filme?",
-  a: ["Stomp the Yard", "You Got Served", "Step Up", "Save the Last Dance"],
-  c: 0
-},
-{
-  q: "Qual álbum duplo ele lançou em 2017?",
-  a: ["X", "Heartbreak on a Full Moon", "Indigo", "Breezy"],
-  c: 1
-}
-,
-{
-  q: "Em que ano Chris Brown ganhou seu primeiro Grammy?",
-  a: ["2010", "2012", "2014", "2016"],
-  c: 1
-},
-{
-  q: "Em que ano Chris Brown ganhou seu segundo Grammy?",
-  a: ["2012", "2018", "2024", "2025"],
-  c: 3
-}
+  { q:"Qual é o nome completo do Chris Brown?", a:["Christopher Maurice Brown","Chris Michael Brown","Christian Brown","Christopher James Brown"], c:0 },
+  { q:"Em que ano Chris Brown nasceu?", a:["1987","1989","1990","1992"], c:1 },
+  { q:"Qual foi o primeiro grande hit dele?", a:["Loyal!","With You","Run It","Yeah 3x"], c:2 },
+  { q:"Chris Brown nasceu em qual estado?", a:["Texas","Califórnia","Virgínia","Nova York"], c:2 },
+  { q:"Qual é o apelido mais famoso dele?", a:["Breezy","CB","Brownie","King Chris"], c:0 }
 ];
 
 let current = 0;
 let score = 0;
+let playerName = "";
+
+const content = document.getElementById("content");
+
+function startScreen() {
+  content.innerHTML = `
+    <h2>🔥 Chris Brown Quiz</h2>
+    <input id="nameInput" placeholder="Digite seu nome">
+    <button onclick="startGame()">Começar</button>
+  `;
+}
+
+function startGame() {
+  const name = document.getElementById("nameInput").value.trim();
+  if (!name) return alert("Digite seu nome!");
+  playerName = name;
+  loadQuestion();
+}
 
 function loadQuestion() {
-  if (current >= questions.length) {
-    document.getElementById("quiz").innerHTML = `
-      <div class="final-container">
-        <h2>🔥 Fim do jogo!</h2>
-        <p>🏆 Sua pontuação: <strong>${score}</strong> pontos</p>
-        <p>Gostou do quiz?
-Compartilhe com seus amigos para que eles também se divirtam. 🔥
-Siga-me nas redes sociais para apoiar este projeto de quiz. 👇👇
- </p>
-
-        <div class="social-buttons">
-          <a class="instagram" href="https://www.instagram.com/w3.ll_/" target="_blank">
-            📸 Instagram
-          </a>
-          <a class="tiktok" href="https://www.tiktok.com/@w.3.l.l?lang=pt-BR" target="_blank">
-            🎵 TikTok
-          </a>
-        </div>
-      </div>
-    `;
-    return;
-  }
+  if (current >= questions.length) return finishGame();
 
   const q = questions[current];
-  document.getElementById("question").innerText = q.q;
-  const answersDiv = document.getElementById("answers");
-  answersDiv.innerHTML = "";
+  document.getElementById("progressBar").style.width =
+    ((current / questions.length) * 100) + "%";
 
-  q.a.forEach((text, index) => {
+  content.innerHTML = `<h3>${q.q}</h3>`;
+  q.a.forEach((text, i) => {
     const btn = document.createElement("button");
     btn.innerText = text;
-    btn.onclick = () => {
-      if (index === q.c) score += 10;
-      document.getElementById("score").innerText = "Pontos: " + score;
-      current++;
-      loadQuestion();
-    };
-    answersDiv.appendChild(btn);
+    btn.onclick = () => answer(btn, i, q.c);
+    content.appendChild(btn);
   });
 }
 
-loadQuestion();
+function answer(button, index, correct) {
+  const buttons = document.querySelectorAll("button");
+  buttons.forEach(b => b.disabled = true);
+
+  if (index === correct) {
+    button.classList.add("correct");
+    score += 10;
+  } else {
+    button.classList.add("wrong");
+    buttons[correct].classList.add("correct");
+  }
+
+  setTimeout(() => {
+    current++;
+    loadQuestion();
+  }, 800);
+}
+
+function finishGame() {
+  saveRanking();
+  const ranking = getRanking();
+
+  content.innerHTML = `
+    <div class="final-container">
+      <h2>🔥 Fim do jogo!</h2>
+      <p><strong>${playerName}</strong>, você fez <strong>${score}</strong> pontos 🏆</p>
+
+      <h3>🏅 Ranking</h3>
+      ${ranking.map((r,i)=>`<p>${i+1}. ${r.name} - ${r.score}</p>`).join("")}
+    </div>
+  `;
+  document.getElementById("progressBar").style.width = "100%";
+}
+
+function saveRanking() {
+  let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+  ranking.push({ name: playerName, score });
+  ranking.sort((a,b)=>b.score-a.score);
+  ranking = ranking.slice(0,5);
+  localStorage.setItem("ranking", JSON.stringify(ranking));
+}
+
+function getRanking() {
+  return JSON.parse(localStorage.getItem("ranking")) || [];
+}
+
+startScreen();
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
