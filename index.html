@@ -222,6 +222,32 @@ function finishGame() {
   `;
   document.getElementById("progressBar").style.width = "100%";
 }
+  let current = 0;
+let score = 0;
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = `
+      <div class="final-container">
+        <h2>🔥 Fim do jogo!</h2>
+        <p>🏆 Sua pontuação: <strong>${score}</strong> pontos</p>
+        <p>Gostou do quiz?
+Compartilhe com seus amigos para que eles também se divirtam. 🔥
+Siga-me nas redes sociais para apoiar este projeto de quiz. 👇👇
+ </p>
+
+        <div class="social-buttons">
+          <a class="instagram" href="https://www.instagram.com/w3.ll_/" target="_blank">
+            📸 Instagram
+          </a>
+          <a class="tiktok" href="https://www.tiktok.com/@w.3.l.l?lang=pt-BR" target="_blank">
+            🎵 TikTok
+          </a>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
 function saveRanking() {
   let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
@@ -240,4 +266,5 @@ startScreen();
 
 </body>
 </html>
+
 
