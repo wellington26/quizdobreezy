@@ -1,143 +1,94 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chris Brown Quiz</title>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #000, #1a1a1a);
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-}
-
-#quiz {
-  background: #111;
-  padding: 20px;
-  border-radius: 14px;
-  width: 340px;
-  text-align: center;
-  box-shadow: 0 0 25px rgba(255,255,255,0.1);
-}
-
-img {
-  max-width: 100%;
-  border-radius: 14px;
-  margin-bottom: 15px;
-}
-
-button {
-  width: 100%;
-  margin: 6px 0;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: #ff0055;
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-button:hover {
-  background: #ff3377;
-  transform: scale(1.05);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
-}
-
-.final-container {
-  animation: fadeIn 1s ease-in-out;
-}
-
-.social-buttons a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 10px;
-  padding: 12px 22px;
-  border-radius: 30px;
-  color: white;
-  font-weight: bold;
-  text-decoration: none;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.social-buttons a:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-
-.instagram {
-  background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af);
-}
-
-.tiktok {
-  background: linear-gradient(45deg, #010101, #25f4ee, #fe2c55);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>
-</head>
-
-<body>
-
-<div id="quiz">
-  <!-- IMAGEM DE CAPA -->
-  <img src="capa.jpg" alt="Chris Brown Quiz">
-
-  <h2 id="question"></h2>
-  <div id="answers"></div>
-  <p id="score">Pontos: 0</p>
-</div>
-
 <script>
-const questions = [
-  {
-    q: "Qual é o nome completo do Chris Brown?",
-    a: ["Christopher Maurice Brown", "Chris Michael Brown", "Christian Brown", "Christopher James Brown"],
-    c: 0
+const lang = navigator.language.startsWith("pt") ? "pt" : "en";
+
+const texts = {
+  pt: {
+    title: "Chris Brown Quiz",
+    score: "Pontos",
+    endTitle: "🔥 Fim do jogo!",
+    follow: "Curtiu o quiz? Me segue nas redes 👇",
+    points: "pontos"
   },
-  {
-    q: "Em que ano Chris Brown nasceu?",
-    a: ["1987", "1989", "1990", "1992"],
-    c: 0
-  },
-  {
-    q: "Qual foi o primeiro grande hit dele?",
-    a: ["Run It!", "With You", "Loyal", "Yeah 3x"],
-    c: 0
-  },
-  {
-    q: "Chris Brown nasceu em qual estado?",
-    a: ["Virgínia", "Califórnia", "Texas", "Nova York"],
-    c: 0
-  },
-  {
-    q: "Além de cantar, ele também é conhecido por:",
-    a: ["Dançar e desenhar", "Ser DJ", "Atuar em novelas", "Produzir filmes"],
-    c: 0
+  en: {
+    title: "Chris Brown Quiz",
+    score: "Score",
+    endTitle: "🔥 Game Over!",
+    follow: "Did you like the quiz? Follow me on social media 👇",
+    points: "points"
   }
-];
+};
+
+const questions = {
+  pt: [
+    {
+      q: "Qual é o nome completo do Chris Brown?",
+      a: ["Christopher Maurice Brown", "Chris Michael Brown", "Christian Brown", "Christopher James Brown"],
+      c: 0
+    },
+    {
+      q: "Em que ano Chris Brown nasceu?",
+      a: ["1987", "1989", "1990", "1992"],
+      c: 0
+    },
+    {
+      q: "Qual foi o primeiro grande hit dele?",
+      a: ["Run It!", "With You", "Loyal", "Yeah 3x"],
+      c: 0
+    },
+    {
+      q: "Chris Brown nasceu em qual estado?",
+      a: ["Virgínia", "Califórnia", "Texas", "Nova York"],
+      c: 0
+    },
+    {
+      q: "Além de cantar, ele também é conhecido por:",
+      a: ["Dançar e desenhar", "Ser DJ", "Atuar em novelas", "Produzir filmes"],
+      c: 0
+    }
+  ],
+
+  en: [
+    {
+      q: "What is Chris Brown's full name?",
+      a: ["Christopher Maurice Brown", "Chris Michael Brown", "Christian Brown", "Christopher James Brown"],
+      c: 0
+    },
+    {
+      q: "What year was Chris Brown born?",
+      a: ["1987", "1989", "1990", "1992"],
+      c: 0
+    },
+    {
+      q: "What was his first major hit?",
+      a: ["Run It!", "With You", "Loyal", "Yeah 3x"],
+      c: 0
+    },
+    {
+      q: "Chris Brown was born in which state?",
+      a: ["Virginia", "California", "Texas", "New York"],
+      c: 0
+    },
+    {
+      q: "Besides singing, he is also known for:",
+      a: ["Dancing and drawing", "Being a DJ", "Acting in soap operas", "Producing movies"],
+      c: 0
+    }
+  ]
+};
 
 let current = 0;
 let score = 0;
 
+const quizData = questions[lang];
+const ui = texts[lang];
+
 function loadQuestion() {
-  if (current >= questions.length) {
+  if (current >= quizData.length) {
     document.getElementById("quiz").innerHTML = `
       <div class="final-container">
-        <h2>🔥 Fim do jogo!</h2>
-        <p>🏆 Sua pontuação: <strong>${score}</strong> pontos</p>
-        <p>Curtiu o quiz? Me segue nas redes 👇</p>
+        <h2>${ui.endTitle}</h2>
+        <p>🏆 ${ui.score}: <strong>${score}</strong> ${ui.points}</p>
+        <p>${ui.follow}</p>
 
         <div class="social-buttons">
           <a class="instagram" href="https://www.instagram.com/w3.ll_/" target="_blank">
@@ -152,8 +103,9 @@ function loadQuestion() {
     return;
   }
 
-  const q = questions[current];
+  const q = quizData[current];
   document.getElementById("question").innerText = q.q;
+  document.getElementById("score").innerText = `${ui.score}: ${score}`;
   const answersDiv = document.getElementById("answers");
   answersDiv.innerHTML = "";
 
@@ -162,7 +114,6 @@ function loadQuestion() {
     btn.innerText = text;
     btn.onclick = () => {
       if (index === q.c) score += 10;
-      document.getElementById("score").innerText = "Pontos: " + score;
       current++;
       loadQuestion();
     };
@@ -172,6 +123,3 @@ function loadQuestion() {
 
 loadQuestion();
 </script>
-
-</body>
-</html>
