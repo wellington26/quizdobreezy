@@ -46,7 +46,6 @@ button {
 }
 
 button:hover { background: #ff3377; }
-
 button.correct { background: #00c853; }
 button.wrong { background: #d50000; }
 button:disabled { cursor: not-allowed; opacity: 0.8; }
@@ -82,6 +81,39 @@ input {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* SOCIAL */
+.social-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.social-buttons a {
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.social-buttons .instagram {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366);
+  color: #fff;
+}
+
+.social-buttons .tiktok {
+  background: #000;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+.social-buttons a:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
 </style>
 </head>
 
@@ -99,57 +131,46 @@ const questions = [
     a: ["Christopher Maurice Brown", "Chris Michael Brown", "Christian Brown", "Christopher James Brown"],
     c: 0
   },
-  {
-    q: "Em que ano Chris Brown nasceu?",
+  { q: "Em que ano Chris Brown nasceu?",
     a: ["1987", "1989", "1990", "1992"],
     c: 1
   },
-  {
-    q: "Qual foi o primeiro grande hit dele?",
+  { q: "Qual foi o primeiro grande hit dele?",
     a: ["Loyal!", "With You", "Run It", "Yeah 3x"],
     c: 2
   },
-  {
-    q: "Chris Brown nasceu em qual estado?",
+  { q: "Chris Brown nasceu em qual estado?",
     a: ["Texas", "Califórnia", "Virgínia", "Nova York"],
     c: 2
   },
-  {
-    q: "Além de cantar, ele também é conhecido por:",
+  { q: "Além de cantar, ele também é conhecido por:",
     a: ["Produzir Filmes", "Ser DJ", "Atuar em novelas", "Dançar e Desenhar"],
     c: 3
+  },
+  { q: "Qual é o apelido mais famoso do Chris Brown?",
+    a: ["Breezy", "CB", "Brownie", "King Chris"],
+    c: 0
+  },
+  { q: "Qual álbum foi lançado em 2011?",
+    a: ["X", "F.A.M.E.", "Indigo", "Royalty"],
+    c: 1
+  },
+  { q: "Chris Brown já atuou em qual filme?",
+    a: ["Stomp the Yard", "You Got Served", "Step Up", "Save the Last Dance"],
+    c: 0
+  },
+  { q: "Qual álbum duplo ele lançou em 2017?",
+    a: ["X", "Heartbreak on a Full Moon", "Indigo", "Breezy"],
+    c: 1
+  },
+  { q: "Em que ano Chris Brown ganhou seu primeiro Grammy?",
+    a: ["2010", "2012", "2014", "2016"],
+    c: 1
+  },
+  { q: "Em que ano Chris Brown ganhou seu segundo Grammy?",
+    a: ["2012", "2018", "2024", "2025"],
+    c: 3
   }
-,
-{
-  q: "Qual é o apelido mais famoso do Chris Brown?",
-  a: ["Breezy", "CB", "Brownie", "King Chris"],
-  c: 0
-},
-{
-  q: "Qual álbum foi lançado em 2011?",
-  a: ["X", "F.A.M.E.", "Indigo", "Royalty"],
-  c: 1
-},
-{
-  q: "Chris Brown já atuou em qual filme?",
-  a: ["Stomp the Yard", "You Got Served", "Step Up", "Save the Last Dance"],
-  c: 0
-},
-{
-  q: "Qual álbum duplo ele lançou em 2017?",
-  a: ["X", "Heartbreak on a Full Moon", "Indigo", "Breezy"],
-  c: 1
-}
-,
-{
-  q: "Em que ano Chris Brown ganhou seu primeiro Grammy?",
-  a: ["2010", "2012", "2014", "2016"],
-  c: 1
-},
-{
-  q: "Em que ano Chris Brown ganhou seu segundo Grammy?",
-  a: ["2012", "2018", "2024", "2025"],
-  c: 3 }
 ];
 
 let current = 0;
@@ -218,6 +239,17 @@ function finishGame() {
 
       <h3>🏅 Ranking</h3>
       ${ranking.map((r,i)=>`<p>${i+1}. ${r.name} - ${r.score}</p>`).join("")}
+
+      <p style="margin-top:15px;">
+        Gostou do quiz?<br>
+        Compartilhe com seus amigos para que eles também se divirtam. 🔥<br>
+        Siga-me nas redes sociais para apoiar este projeto de quiz. 👇👇
+      </p>
+
+      <div class="social-buttons">
+        <a class="instagram" href="https://www.instagram.com/w3.ll_/" target="_blank">📸 Instagram</a>
+        <a class="tiktok" href="https://www.tiktok.com/@w.3.l.l?lang=pt-BR" target="_blank">🎵 TikTok</a>
+      </div>
     </div>
   `;
   document.getElementById("progressBar").style.width = "100%";
@@ -240,5 +272,3 @@ startScreen();
 
 </body>
 </html>
-
-
